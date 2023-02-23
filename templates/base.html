@@ -13,9 +13,7 @@
 <body>
   {% block toolbar %}
   <div id="toolbar">
-    <a href="/"><button>Home</button></a>
-    <h1>La Banque
-    </h1>
+    <a href="/"><button style="font-family: 'Times New Roman', serif;">La Banque</button></a>
     {% if session.id %}
       <form action="/logout/" method="post" style="display: inline">
         <button style="float: right;">Logout</button>

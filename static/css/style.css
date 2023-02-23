@@ -39,12 +39,6 @@ div#toolbar button:active {
     background-color: #00CC66;
 }
 
-div#toolbar>h1 {
-    font-family: 'Times New Roman', Times,  serif;
-    display: inline;
-    color: white;
-}
-
 .flex-container {
     display: flex;
     justify-content: center;
