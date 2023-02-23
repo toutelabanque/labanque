@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block body %}
+<div>
+  <h2 style="text-align: center;">Balance: ${{balance}}</h2>
+  <div class="flex-container" style="flex-wrap: nowrap; padding: 10px; overflow-x: auto; gap: 10vw;">
+    {% for account in accounts %}
+      <div style="background-color:whitesmoke; flex-direction: column;" class="card flex-container">
+        <h3>{{ account.id }}</h3>
+        <p>
+          {{ account.type | capitalize }}
+        </p>
+        {% if account.r != "" %}
+          <p>
+            {{ account.r }}%
+          </p>
+        {% endif %}
+        {% if account.term != "" %}
+          <p>
+            {{ account.term }}
+          </p>
+        {% endif %}
+        <p>
+          ${{ account.balance }}
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

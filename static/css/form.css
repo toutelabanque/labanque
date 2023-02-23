@@ -1,0 +1,56 @@
+body {
+    height: 100vh;
+}
+
+form {
+    width: 40vw;
+    height: 40vh;
+    padding: 1mm;
+}
+
+form>* {
+    display: block;
+    font-size: 2.5vh;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 100%;
+    padding: 1.5%;
+    margin: 0 5px;
+}
+
+form p {
+    color: black;
+}
+
+form>div,
+form>a {
+    border: none;
+    border-radius: 0;
+    color: blue;
+    text-align: center;
+}
+
+form>a:active {
+    color: blue;
+}
+
+form>a:visited {
+    color: blue;
+}
+
+form input:invalid {
+    outline: 2px solid red;
+}
+
+form>button {
+    background-color: white;
+    cursor: pointer;
+}
+
+form>button:hover {
+    background-color: lightgray;
+}
+
+form>button:active {
+    background-color: #00CC66;
+}

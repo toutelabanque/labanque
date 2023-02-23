@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+<script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
+{% endblock %}
+
+{% block body %}
+<div class="flex-container">
+  <form name="login" action="/login/" method="post" class="centered flex-container card">
+    <h2 style="border: 0; text-align: center;">Login</h2>
+    {% if wrong %}
+    <div style="background-color: lightcoral; border: 1px solid black; padding: 0;">
+      <p>Invalid username or password</p>
+    </div>
+    {% endif %}
+    {% if new %}
+    <div style="border: 1px solid black;">
+      <p>You are now a member! Your ID is {{ new }} (don't lose this!). Now just login with that and the password you just set.</p>
+    </div>
+    {% endif %}
+    <input name="id" type="number" min="1000000000" max="9999999999" minlength="10" maxlength="10" placeholder="Account ID (10-digit)" value="{% if new %}{{ new }}{% endif %}" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <button type="submit">Login →</button>
+    <a href="/sign-up/" style="display: inline; font-size: medium;">Not a member? Sign up!</a>
+  </form>
+</div>
+{% endblock %}

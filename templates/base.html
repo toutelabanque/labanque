@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Banque – {% block title %}{% endblock %}</title>
+  {% block head %}
+  {% endblock %}
+  {% block override_favicon %}<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">{% endblock %}
+  {% block override_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">{% endblock %}
+  {% block override_js %}<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>{% endblock %}
+</head>
+<body>
+  {% block toolbar %}
+  <div id="toolbar">
+    <a href="/"><button>Home</button></a>
+    <h1>La Banque
+    </h1>
+    {% if session.id %}
+      <form action="/logout/" method="post" style="display: inline">
+        <button style="float: right;">Logout</button>
+      </form>
+    {% else %}
+      <a href="/login/"><button style="float: right;">Login</button></a>
+    {% endif %}
+  </div>
+  {% endblock %}
+  <div class="background">
+  </div>
+  {% block body %}
+  {% endblock %}
+</body>
+</html>
