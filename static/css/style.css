@@ -17,13 +17,13 @@ body > div.background {
     z-index: 1;
 }
 
-div#toolbar {
+nav#toolbar {
     position: sticky;
     background-color: black;
     z-index: 2;
 }
 
-div#toolbar button {
+nav#toolbar button {
     background-color: black;
     color: white;
     padding: 3vh 2.3vh;
@@ -31,11 +31,11 @@ div#toolbar button {
     border: 0;
 }
 
-div#toolbar button:hover {
+nav#toolbar button:hover {
     background-color: #555555;
 }
 
-div#toolbar button:active {
+nav#toolbar button:active {
     background-color: #00CC66;
 }
 

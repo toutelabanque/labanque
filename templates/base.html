@@ -12,7 +12,7 @@
 </head>
 <body>
   {% block toolbar %}
-  <div id="toolbar">
+  <nav id="toolbar">
     <a href="/"><button style="font-family: 'Times New Roman', serif;">La Banque</button></a>
     {% if session.id %}
       <form action="/logout/" method="post" style="display: inline">
@@ -21,7 +21,7 @@
     {% else %}
       <a href="/login/"><button style="float: right;">Login</button></a>
     {% endif %}
-  </div>
+  </nav>
   {% endblock %}
   <div class="background">
   </div>
