@@ -9,12 +9,12 @@
 
 {% block body %}
 <div class="flex-container">
-  <form name="sign-up" action="/sign-up/" method="post" class="centered flex-container card">
-    <h2 style="border: 0; text-align: center;">Sign Up</h2>
+  <form name="sign-up" method="post" class="centered flex-container card">
+    <h2>Sign Up</h2>
     {% if match_issue %}
-    <div style="background-color: lightcoral;  border: 1px solid black; padding: 0;">
-      <p>Passwords did not match</p>
-    </div>
+    <p style="background-color: lightcoral;" class="notice">
+      Passwords did not match
+    </p>
     {% endif %}
     <input name="f-name" placeholder="First Name" required>
     <input name="l-name" placeholder="Last Name" required>

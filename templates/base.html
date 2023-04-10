@@ -9,13 +9,28 @@
   {% block override_favicon %}<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">{% endblock %}
   {% block override_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">{% endblock %}
   {% block override_js %}<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>{% endblock %}
+  <noscript>
+    <style>
+      body > noscript ~ * {
+        display: none;
+      }
+    </style>
+  </noscript>
+  
 </head>
 <body>
+  <noscript>
+    <p>Please activate JavaScript to use this website. This is to ensure that data you submit is valid.</p>
+  </noscript>
   {% block toolbar %}
   <nav id="toolbar">
-    <a href="/"><button style="font-family: 'Times New Roman', serif;">La Banque</button></a>
+    <form action="/"><button style="font-family: 'Times New Roman', serif;">La Banque</button></form>
+    <form action="/direct-transfer/"><button>Direct Transfer</button></form>
+    <form action="/open-account/"><button>Open Account</button></form>
+    <form action="/get-loan/"><button>Get Loan</button></form>
+    <form action="/transaction-history/"><button>Transaction History</button></form>
     {% if session.id %}
-      <form action="/logout/" method="post" style="display: inline">
+      <form action="/logout/" method="post">
         <button style="float: right;">Logout</button>
       </form>
     {% else %}
@@ -23,8 +38,10 @@
     {% endif %}
   </nav>
   {% endblock %}
-  <div class="background">
+  {% block override_bg %}
+  <div id="background">
   </div>
+  {% endblock %}
   {% block body %}
   {% endblock %}
 </body>

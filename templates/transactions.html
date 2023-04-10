@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Transaction History{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='css/table.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<table style="margin: 20px auto;">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Amount</th>
+      <th>3rd Party (Hover for ID)</th>
+      <th>Datetime (UTC)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for transaction in transactions[::-1] %}
+    {# BUG #}
+    <tr onclick="navigator.clipboard.writeText(window.location.origin + '/account/' + this.firstElementChild.innerText)">
+      <th id="{{ transaction.id }}">{{ transaction.id }}</th>
+      <td style="background-color: {{ loop.cycle('white', 'lightgray') }};">{{ transaction.amount }}</td>
+      {% if transaction.amount < 0 %}
+        {% set id = transaction.recipient_id %}
+      {% else %}
+        {% set id = transaction.payer_id %}
+      {% endif %}
+      <td title="{{ id }}" style="background-color: {{ loop.cycle('white', 'lightgray') }};">
+        {{ get_member(id).f_name }} {{ get_member(id).l_name }}
+      </td>
+      <td style="background-color: {{ loop.cycle('white', 'lightgray') }};">{{ transaction.date }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

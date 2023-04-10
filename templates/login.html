@@ -9,19 +9,19 @@
 
 {% block body %}
 <div class="flex-container">
-  <form name="login" action="/login/" method="post" class="centered flex-container card">
-    <h2 style="border: 0; text-align: center;">Login</h2>
+  <form name="login" action="/login/?redir={{ redir }}" method="post" class="centered flex-container card">
+    <h2>Login</h2>
     {% if wrong %}
-    <div style="background-color: lightcoral; border: 1px solid black; padding: 0;">
-      <p>Invalid username or password</p>
-    </div>
+    <p style="background-color: lightcoral;" class="notice">
+      Invalid username or password
+    </p>
     {% endif %}
     {% if new %}
-    <div style="border: 1px solid black;">
+    <p class="notice">
       <p>You are now a member! Your ID is {{ new }} (don't lose this!). Now just login the password you just set.</p>
-    </div>
+    </p>
     {% endif %}
-    <input name="id" type="number" min="1000000000" max="9999999999" minlength="10" maxlength="10" placeholder="Member ID (10-digit)" value="{% if new %}{{ new }}{% endif %}" required>
+    <input name="id" type="number" min="1000000000" maxlength="10" placeholder="Member ID (10-digit)" value="{% if new %}{{ new }}{% endif %}" required>
     <input name="password" type="password" placeholder="Password" required>
     <button>Login →</button>
     <a href="/sign-up/" style="display: inline; font-size: medium;">Not a member? Sign up!</a>

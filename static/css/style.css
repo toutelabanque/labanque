@@ -1,34 +1,41 @@
 body {
     margin: 0;
     font-family: "Calibri", sans-serif;
-    font-size: 2vmin;
+    font-size: 2dvmin;
 }
 
-body * {
+* {
     position: relative;
     z-index: 10;
 }
 
-body > div.background {
+body > div#background {
     position: fixed;
-    height: 100vh;
-    width: 100vw;
+    top: 0;
+    height: 100dvh;
+    width: 100dvw;
     background-image: linear-gradient(to bottom right, #00CC66, purple);
     z-index: 1;
 }
 
 nav#toolbar {
     position: sticky;
+    top: 0;
     background-color: black;
-    z-index: 2;
+    z-index: 20;
+}
+
+nav#toolbar > form {
+    display: inline;
 }
 
 nav#toolbar button {
     background-color: black;
     color: white;
-    padding: 3vh 2.3vh;
+    padding: 3dvh 1.5dvw;
     cursor: pointer;
     border: 0;
+    transition: background-color 0.3s ease-in-out;
 }
 
 nav#toolbar button:hover {
@@ -36,7 +43,7 @@ nav#toolbar button:hover {
 }
 
 nav#toolbar button:active {
-    background-color: #00CC66;
+    color: #00CC66;
 }
 
 .flex-container {
@@ -45,7 +52,7 @@ nav#toolbar button:active {
     align-items: center;
     align-content: space-around;
     flex-wrap: wrap;
-    gap: 10px;
+    row-gap: 2mm;
 }
 
 .centered {
@@ -62,6 +69,11 @@ nav#toolbar button:active {
     border-radius: 10px;
     box-shadow: 7px 7px 5px black;
     background-color: white;
-    padding: 5%;
+    padding: 2mm;
     height: fit-content;
+    width: 70dvw;
+}
+
+button:hover, form.button:hover {
+    cursor: pointer;
 }

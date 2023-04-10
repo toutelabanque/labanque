@@ -1,5 +1,25 @@
 {% extends 'base.html' %}
 
-{% block body %}
+{% block title %}Account #{{account.id}}{% endblock %}
 
+{% block body %}
+  <div style="flex-direction: column; height: 60vh;" class="centered card flex-container">
+    <h3>{{ account.id }}</h3>
+    <p>
+      {{ account.type | capitalize }}
+    </p>
+    {% if account.r is not none %}
+      <p>
+        {{ account.r }}%
+      </p>
+    {% endif %}
+    {% if account.term is not none %}
+      <p>
+        {{ account.term }}
+      </p>
+    {% endif %}
+    <p>
+      ${{ account.balance }}
+    </p>
+  </div>
 {% endblock %}

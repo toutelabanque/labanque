@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Direct Transfer{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+  <script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
+{% endblock %}
+
+{% block body %}
+  <form class="centered flex-container card" method="post">
+    <h2>Direct Transfer</h2>
+    {% if not exists %}
+      <p style="background-color: lightcoral;" class="notice">
+        The member to whom you attempted to send money does not exist.
+      </p>
+    {% endif %}
+    {% if remaining != "" %}
+      {% if remaining < 0 %}
+        <p style="background-color: lightcoral;">
+          You emptied your checking account but were ${{ -remaining }} short.
+        </p>
+      {% else %}
+        <p>
+          Transaction complete! You have ${{ remaining }} left.
+        </p>
+      {% endif %}
+    {% endif %}
+    <input name="to" type="number" min="1000000000" maxlength="10" placeholder="To (10-digit Member ID)" required>
+    <input name="amount" type="number" step="0.01" min="0.01" placeholder="Amount ($)" required>
+    <button>Transfer!</button>
+  </form>
+{% endblock %}

@@ -1,16 +1,10 @@
 body {
-    height: 100vh;
+    height: 100dvh;
 }
 
-form {
-    width: 40vw;
-    height: 40vh;
-    padding: 1mm;
-}
-
-form>* {
+form.card>*, form.card fieldset {
     display: block;
-    font-size: 2.5vh;
+    font-size: 2.5dvh;
     border: 1px solid black;
     border-radius: 5px;
     width: 100%;
@@ -18,39 +12,50 @@ form>* {
     margin: 0 5px;
 }
 
-form p {
-    color: black;
+form.card>fieldset fieldset {
+    width: 90%;
+    border: 0;
 }
 
-form>div,
-form>a {
+form.card>div,
+form.card>a {
     border: none;
     border-radius: 0;
     color: blue;
     text-align: center;
 }
 
-form>a:active {
+form.card>p.notice {
+    border: 1px solid black;
+    color: black;
+}
+
+form.card>a:active {
     color: blue;
 }
 
-form>a:visited {
+form.card>a:visited {
     color: blue;
 }
 
-form input:invalid {
+form.card input:invalid {
     outline: 2px solid red;
 }
 
-form>button {
+form.card>button {
     background-color: white;
     cursor: pointer;
 }
 
-form>button:hover {
+form.card>button:hover {
     background-color: lightgray;
 }
 
-form>button:active {
+form.card>button:active {
     background-color: #00CC66;
+}
+
+form.card>h2 {
+    border: 0;
+    text-align: center;
 }
