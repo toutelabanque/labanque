@@ -3,48 +3,64 @@
 {% block title %}Open Account{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
-<script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/form.css') }}">
+  <script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
 {% endblock %}
 
 {% block body %}
-<form class="centered flex-container card" method="post">
-  <h2>Open Account</h2>
-  {% if done %}
-    <p class="notice">Account successfully opened! 
-      <a href="/">Check it out</a>!
-    </p>
-  {% endif %}
-  {% if rates[-1] is not none %}
-    <fieldset>
-      <legend>Choose Account Type</legend>
-      <label>
-        <input type="radio" name="type" value="cd" class="enable-next" required>
-        Certificate of Deposit
-        <fieldset>
-          {% for term in rates %}
-            {% if loop.index > 1 %}
-              <label>
-                <input type="radio" name="term" value="{{ term }}">
-                {{term | int}} yr{% if term > 1 %}s{% endif %}. ({{ rates[term] | round(2) }}%)
-              </label><br>
-            {% endif %}
-          {% endfor %}
-        </fieldset>
-      </label><br>
-      <label>
-        <input type="radio" name="type" value="savings">
-        Savings ({{ rates[-1] | round(2) }}%)
-      </label>
-    </fieldset>
-    <input name="starting-amount" type="number" step="0.01" min="0.01" placeholder="Starting Amount ($)" required>
-    <button>Open Account</button>
-  {% else %}
-    <p class="notice">
-      You don't have any credit history, so you can't make an 
-      account yet. Try <a href="/get-credit-card/">applying for a 
-      credit card</a> to build history!
-    </p>
-  {% endif %}
-</form>
+  <form class="centered flex-container card" method="post">
+    <h2>Open Account</h2>
+    {% if done %}
+      <p class="notice">
+        Account successfully opened!
+        <a href="/accounts/#{{ done }}">Check it out</a>!
+      </p>
+    {% endif %}
+    {% if poor %}
+      <p class="notice" style="background-color: coral;">
+        You didn't have enough money in your checking to initiate a new account with that much money.
+      </p>
+    {% endif %}
+    {% if rates[-1] is not none %}
+      <fieldset>
+        <legend>
+          Choose Account Type
+        </legend>
+        <label>
+          <input type="radio" name="type" value="savings">
+          Savings ({{ rates[-1] | round(2) }}%)
+        </label>
+        <br>
+        <label>
+          <input type="radio" name="type" value="cd" class="enable-next" required>
+          Certificate of Deposit
+          <fieldset>
+            {% for term in rates %}
+              {% if loop.index > 1 %}
+                <label>
+                  <input type="radio" name="term" value="{{ term }}">
+                  {{ term | int }}yr{% if term > 1 %}s{% endif %}. ({{ rates[term] | round(2) }}%)
+                </label>
+                <br>
+              {% endif %}
+            {% endfor %}
+          </fieldset>
+        </label>
+      </fieldset>
+      <input name="starting-amount"
+             type="number"
+             step="0.01"
+             min="0.00"
+             placeholder="Starting Amount ($)"
+             required>
+      <button>Open Account</button>
+    {% else %}
+      <p class="notice">
+        You don't have any credit history, so you can't make an
+        account yet. Try <a href="/get-credit-card/">applying for a
+        credit card</a> to build history!
+      </p>
+    {% endif %}
+  </form>
 {% endblock %}

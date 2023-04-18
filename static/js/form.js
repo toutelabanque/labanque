@@ -33,3 +33,7 @@ if (child_enablers !== null) {
         }
     }, 100);
 }
+
+if ( window.history.replaceState ) {
+    window.history.replaceState( null, null, window.location.href );
+}

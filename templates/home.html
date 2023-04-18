@@ -4,19 +4,38 @@
 
 {% block body %}
   <div>
-    <h2 style="text-align: center;">Balance: ${{ balance | round(2) }}</h2>
+    <h2 style="text-align: center;">Balance: ${{ balance | round(2) }}*</h2>
     <div class="flex-container"
          style="flex-wrap: nowrap;
                 padding: 10px;
                 overflow-x: auto;
-                gap: 10vw">
-      {% for account in accounts %}
-        <div style="flex-direction: column;" class="card flex-container">
-          <h3>{{ account.id }}</h3>
-          <p>{{ account.type | capitalize }}</p>
-          <p>${{ account.balance }}</p>
-        </div>
+                gap: 45px;
+                background-color: whitesmoke;
+                margin: 0 2%;
+                border-radius: 5px">
+      {% for account in accounts[:4] %}
+        <form action="/accounts/{{ account.id }}/"
+              style="width: 40vw"
+              class="card flex-container button">
+          <button style="flex-direction: column;
+                         background-color: white;
+                         border: none;
+                         width: 100%;
+                         height: 100%"
+                  class="flex-container">
+            <h3>ID: #{{ account.id }}</h3>
+            <p>Type: {{ account.type | capitalize | replace('d', 'D') }}</p>
+            <p>Balance: ${{ account.balance | round(2) }}</p>
+          </button>
+        </form>
       {% endfor %}
+      {% if accounts | length > 4 %}
+        <a href="/accounts/" style="text-align: center; text-decoration: none;">All Accounts →</a>
+      {% endif %}
     </div>
   </div>
+
+  <footer>
+    *Excludes CDs. *Rounded to the nearest cent.
+  </footer>
 {% endblock %}

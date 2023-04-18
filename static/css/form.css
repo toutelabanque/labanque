@@ -1,10 +1,10 @@
 body {
-    height: 100dvh;
+    height: 100vh;
 }
 
 form.card>*, form.card fieldset {
     display: block;
-    font-size: 2.5dvh;
+    font-size: 2.5vh;
     border: 1px solid black;
     border-radius: 5px;
     width: 100%;

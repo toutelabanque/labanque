@@ -3,27 +3,28 @@
 {% block title %}Accounts{% endblock %}
 
 {% block body %}
-{% for account in accounts %}
-  <form action="/accounts/{{ account.id }}/" style="margin: 20px auto 0; width: 40vw;" class="card flex-container button">
-    <button style="flex-direction: column; background-color: white; border: none; width: 100%; height: 100%;" class="flex-container">
-      <h3>{{ account.id }}</h3>
-      <p>
-        {{ account.type | capitalize }}
-      </p>
-      {% if account.r is not none %}
-        <p>
-          {{ account.r }}%
-        </p>
-      {% endif %}
-      {% if account.term is not none %}
-        <p>
-          {{ account.term }}
-        </p>
-      {% endif %}
-      <p>
-        ${{ account.balance }}
-      </p>
-    </button>
-  </form>
-{% endfor %}
+  {% for account in accounts %}
+    <form action="/accounts/{{ account.id }}/"
+          style="margin: 20px auto {% if loop.last %} 20px {% else %} 0 {% endif %};
+                 width: 40vw;"
+          class="card flex-container button"
+          id="{{ account.id }}">
+      <button style="flex-direction: column;
+                     background-color: white;
+                     border: none;
+                     width: 100%;
+                     height: 100%"
+              class="flex-container">
+        <h3>ID: #{{ account.id }}</h3>
+        <p>Type: {{ account.type | capitalize | replace('d', 'D') }}</p>
+        {% if account.r is not none %}
+          <p>Interest Rate: {{ account.r }}%</p>
+        {% endif %}
+        {% if account.term is not none %}
+          <p>Term: {{ account.term }}</p>
+        {% endif %}
+        <p>Balance: ${{ account.balance }}</p>
+      </button>
+    </form>
+  {% endfor %}
 {% endblock %}

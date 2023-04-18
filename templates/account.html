@@ -1,25 +1,57 @@
 {% extends 'base.html' %}
 
-{% block title %}Account #{{account.id}}{% endblock %}
+{% block head %}
+  <style>
+    form.card>button {
+        background-color: white;
+        cursor: pointer;
+    }
+
+    form.card>button:hover {
+        background-color: lightgray;
+    }
+
+    form.card>button:active {
+        background-color: #00CC66;
+    }
+  </style>
+{% endblock %}
+
+{% block title %}Account #{{ account.id }}{% endblock %}
 
 {% block body %}
-  <div style="flex-direction: column; height: 60vh;" class="centered card flex-container">
-    <h3>{{ account.id }}</h3>
-    <p>
-      {{ account.type | capitalize }}
-    </p>
+  <div style="flex-direction: column;
+              height: 60vh"
+       class="centered card flex-container">
+    <h3>ID: #{{ account.id }}</h3>
+    <p>Type: {{ account.type | capitalize | replace('d', 'D') }}</p>
     {% if account.r is not none %}
-      <p>
-        {{ account.r }}%
-      </p>
+      <p>Rate: {{ account.r }}%</p>
     {% endif %}
-    {% if account.term is not none %}
-      <p>
-        {{ account.term }}
-      </p>
+    {% if account.term is not none %}<p>Term: {{ account.term }}</p>{% endif %}
+    <p>Balance: ${{ account.balance }}</p>
+    {% if account.type != 'cd' %}
+      {% set actions = ('close',) %}
     {% endif %}
-    <p>
-      ${{ account.balance }}
-    </p>
+    {% if account.type == 'checking' %}
+      {% if checking %}
+        {% set actions = ('manage-debit-access',) %}
+      {% endif %}
+      {% set actions = actions + ('link',) %}
+    {% endif %}
+    {% if accounts | length > 1 and account.type != 'cd' %}
+      {% set actions = actions + ('transfer',) %}
+    {% endif %}
+    {% for action in actions %}
+      <form action="/accounts/{{ action }}/{{ account.id }}/">
+        <button style="width: 30vw;
+                       height: max-content;
+                       background-color: white;
+                       border-radius: 5px;
+                       border: 1px solid black">
+          {{ action | replace('-', ' ') | title }}
+        </button>
+      </form>
+    {% endfor %}
   </div>
 {% endblock %}

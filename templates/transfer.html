@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <style>
+    form.card input:invalid {
+        outline: 2px solid red;
+    }
+
+    form.card>* {
+        margin: 3%;
+    }
+
+    form.card>button {
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+  </style>
+  <script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
+{% endblock %}
+
+{% block title %}Transfer Funds{% endblock %}
+
+{% block body %}
+  <form class="centered card"
+        style="background-color: whitesmoke;
+               margin: 0 2%;
+               border-radius: 10px;
+               text-align: center"
+        method="post">
+    {% if accounts | length > 0 %}
+      <h2>Transfer</h2>
+      {% for account in accounts %}
+        <label class="flex-container"
+               style="border: 1px solid black;
+                      border-radius: 10px;
+                      flex-direction: column;
+                      padding: 20px;
+                      display: inline-block">
+          <h3>ID: #{{ account.id }}</h3>
+          <p>Type: {{ account.type | capitalize }}</p>
+          <p>Balance: ${{ account.balance }}</p>
+          <input type="radio" name="to" value="{{ account.id }}" required>
+        </label>
+      {% endfor %}
+      <br>
+      <input name="amount"
+             type="number"
+             min="0.01"
+             max="{{ funds }}"
+             step="0.01"
+             placeholder="How much? ($)"
+             style="width: 30vw"
+             required>
+      <br>
+      <button>Transfer!</button>
+    {% else %}
+      <p>You don't have any accounts to transfer your funds to.</p>
+    {% endif %}
+  </form>
+{% endblock %}

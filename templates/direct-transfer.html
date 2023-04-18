@@ -12,22 +12,22 @@
     <h2>Direct Transfer</h2>
     {% if not exists %}
       <p style="background-color: lightcoral;" class="notice">
-        The member to whom you attempted to send money does not exist.
+        The member to whom you attempted send money does not exist.
       </p>
     {% endif %}
     {% if remaining != "" %}
       {% if remaining < 0 %}
         <p style="background-color: lightcoral;">
-          You emptied your checking account but were ${{ -remaining }} short.
+          You were ${{ -remaining }} short, so you couldn't make the transaction of ${{ charged }}
         </p>
       {% else %}
         <p>
-          Transaction complete! You have ${{ remaining }} left.
+          Transaction complete! You were charged ${{ charged }} and have ${{ remaining }} left.
         </p>
       {% endif %}
     {% endif %}
-    <input name="to" type="number" min="1000000000" maxlength="10" placeholder="To (10-digit Member ID)" required>
+    <input name="to" type="number" min="1000000000" max="1000000999" placeholder="To (10-digit Member ID)" required>
     <input name="amount" type="number" step="0.01" min="0.01" placeholder="Amount ($)" required>
-    <button>Transfer!</button>
+    <button>Send!</button>
   </form>
 {% endblock %}

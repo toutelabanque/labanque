@@ -18,10 +18,10 @@
     {% endif %}
     {% if new %}
     <p class="notice">
-      <p>You are now a member! Your ID is {{ new }} (don't lose this!). Now just login the password you just set.</p>
+      You are now a member! Your ID is {{ new }} (don't lose this!). Now just login the password you just set.
     </p>
     {% endif %}
-    <input name="id" type="number" min="1000000000" maxlength="10" placeholder="Member ID (10-digit)" value="{% if new %}{{ new }}{% endif %}" required>
+    <input name="id" type="number" min="1000000000" placeholder="Member ID (10-digit)" value="{% if new %}{{ new }}{% endif %}" required>
     <input name="password" type="password" placeholder="Password" required>
     <button>Login →</button>
     <a href="/sign-up/" style="display: inline; font-size: medium;">Not a member? Sign up!</a>

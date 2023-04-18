@@ -55,7 +55,7 @@ class Account:
     def __init__(self, balance: float, type: Literal['cd'], member_id: str, id: int | None, r: float, term: float):
         ...
 
-    def __init__(self, balance, type, member_id, id = None, r = None, term = None):
+    def __init__(self, balance, type, member_id, id=None, r=None, term=None):
         self.id = id
         self.balance = balance
         self.type = type
@@ -83,7 +83,7 @@ class Member:
 
     members: list[Member] = []
 
-    id_space: list[int] = cursor.execute('SELECT id FROM id_space').fetchall()
+    id_space: Callable[[], list[tuple[int]]] = lambda: Member.cursor.execute('SELECT id FROM id_space').fetchall()
 
     def __init__(self, id: str | None, *args) -> None:
         """Member(id: str | None, [f_name: str], [l_name: str], [pass_hash: Callable[[], bytes]])"""
@@ -104,6 +104,8 @@ class Member:
                     'SELECT l_name FROM members WHERE id = ?;', (id,)).fetchone()[0]
                 self.pass_hash: Callable[[], bytes] = lambda: Member.cursor.execute(
                     'SELECT pass_hash FROM members WHERE id = ?;', (id,)).fetchone()[0]
+                self.pin_hash: Callable[[], bytes | None] = lambda: Member.cursor.execute(
+                    'SELECT pin_hash FROM members WHERE id = ?;', (id,)).fetchone()[0]
                 self.credit_score: int | None = Member.cursor.execute(
                     'SELECT credit_score from members WHERE id = ?', (id,)).fetchone()[0]
 
@@ -116,7 +118,10 @@ class Member:
 
                 for account in Member.cursor.execute('SELECT * from accounts WHERE member_id = ?;', (id,)):
                     self.accounts.append(Account(
-                        account[1], account[2], self.id, account[0], account[4], account[5]))  # type: ignore
+                        account[1], account[2], self.id, account[0], account[4], account[5]))
+
+                # First Checking Account is main checking account used for DTs, etc.
+                self.accounts.sort(key=lambda a: a.id)
                 for account in self.accounts:
                     if account.type == 'checking':
                         self.checking = account
@@ -124,8 +129,8 @@ class Member:
 
                 for loan in Member.cursor.execute('SELECT * from loans WHERE member_id = ?;', (id,)):
                     self.loans.append(Loan(loan[1], loan[2], self.id, loan[0]))
-                
-                self.transactions.sort(key=lambda v: v.id)
+
+                self.transactions.sort(key=lambda t: t.id)
                 self.sync_balance()
                 Member.members.append(self)
         elif len(args) == 3:
@@ -133,14 +138,17 @@ class Member:
             self.f_name: str = args[0]
             self.l_name: str = args[1]
             self.pass_hash: Callable[[], bytes] = lambda: args[2]
+            self.pin_hash = lambda: None
             self.credit_score = None
             try:
-                self.id: str = str(choice(Member.id_space))
+                self.id: str = str(choice(Member.id_space())[0])
             except IndexError:
                 raise IndexError("Ran out of available Member IDs.")
-            Member.id_space.remove(int(self.id))
+            Member.id_space().remove((int(self.id),))
+            Member.cursor.executemany('INSERT OR REPLACE INTO id_space VALUES (?)', Member.id_space())
 
-            self.checking = Account(0.0, 'checking', self.id)
+            # Make main Checking Account to be used for DTs, etc. Starts with $1,000.
+            self.checking = Account(1000.0, 'checking', self.id)
             self.accounts.append(self.checking)
         else:
             raise IndexError(
@@ -149,38 +157,53 @@ class Member:
         self.save()
 
     def sync_balance(self):
+        self.balance = 0.00
         for account in self.accounts:
-            self.balance = 0.00
             self.balance += account.balance if account.type != "cd" else 0.00
 
-    def create_account(self, starting_amount: float, r: float, term: float | None = None):
-        if isinstance(term, float):
+    def create_account(self, starting_amount: float, r: float | None = None, term: float | None = None):
+        if self.checking.balance >= starting_amount:
+            self.checking.balance -= starting_amount
+        else:
+            raise ValueError
+        if isinstance(r, float) and isinstance(term, float):
             # For CD
             self.accounts.append(
                 Account(starting_amount, 'cd', self.id, None, r, term))
-        else:
+        elif isinstance(r, float):
             # For Savings Account
             self.accounts.append(
                 Account(starting_amount, 'savings', self.id, None, r))
+        elif r is None and term is None:
+            # For Checking Account
+            self.accounts.append(
+                Account(starting_amount, 'checking', self.id)
+            )
+        self.save()
         self.accounts[-1].id = Member.cursor.execute(
             'SELECT id FROM accounts ORDER BY id DESC LIMIT 1;').fetchone()[0]
-        self.save()
         self.sync_balance()
+        return self.accounts[-1].id
 
-    def charge(self, recipient: Member, amount: float, taxable: bool = True) -> float | None:
-        self.transactions.append(Transaction(-amount, self.id, recipient.id))
-        recipient.transactions.append(Transaction(amount, self.id, recipient.id))
-        # In case you don't have enough money, sends as much as you have.
-        amount_sent = self.checking.balance if self.checking.balance - amount < 0 else amount
-        self.checking.balance = 0 if self.checking.balance - amount < 0 else self.checking.balance - amount
-        
+    def charge(self, recipient: Member, amount: float, taxable: bool = True) -> tuple[float, float, float]:
         if taxable:
             sales_tax = SALES_TAX_PERCENT * amount
-            recipient.checking.balance += amount_sent - sales_tax
             Member.get_member(
-                '0000000000').balance += sales_tax  # type: ignore
+                '0000000000').checking.balance += sales_tax
         else:
-            recipient.checking.balance += amount_sent
+            sales_tax = 0.0
+
+
+        if self.checking.balance >= amount + sales_tax:
+            self.checking.balance -= amount + sales_tax
+            recipient.checking.balance += amount - sales_tax
+        # In case you don't have enough money, bounce.
+        else:
+            return (amount, self.checking.balance - amount, sales_tax)
+
+        self.transactions.append(Transaction(-amount-sales_tax, self.id, recipient.id))
+        recipient.transactions.append(
+            Transaction(amount, self.id, recipient.id))
 
         self.sync_balance()
         self.save()
@@ -192,19 +215,22 @@ class Member:
         recipient.transactions[-1].id = Member.cursor.execute(
             'SELECT id FROM transactions ORDER BY id DESC LIMIT 1;').fetchone()[0]
 
-        return self.balance - amount
+        return (amount, self.balance, sales_tax)
 
     def save(self):
-        Member.cursor.execute('INSERT OR REPLACE INTO members VALUES (?, ?, ?, ?, ?);', (
-            self.id, self.f_name, self.l_name, self.credit_score, self.pass_hash()))
+        Member.cursor.execute('INSERT OR REPLACE INTO members VALUES (?, ?, ?, ?, ?, ?);', (
+            self.id, self.f_name, self.l_name, self.credit_score, self.pass_hash(), self.pin_hash()))
 
         Member.cursor.executemany('INSERT OR REPLACE INTO transactions (id, amount, payer_id, recipient_id, date) VALUES (?, ?, ?, ?, ?);', [
             tuple(t) for t in self.transactions if t.recipient_id == self.id])
 
-        Member.cursor.executemany('INSERT OR REPLACE INTO accounts (id, balance, type, member_id, r, term) VALUES (?, ?, ?, ?, ?, ?);', [
+        # Since they can be deleted
+        Member.cursor.execute('DELETE FROM accounts WHERE member_id = ?', (self.id,))
+        Member.cursor.executemany('INSERT INTO accounts (id, balance, type, member_id, r, term) VALUES (?, ?, ?, ?, ?, ?);', [
             tuple(a) for a in self.accounts])
 
-        Member.cursor.executemany('INSERT OR REPLACE INTO loans (id, principal, rate, member_id) VALUES (?, ?, ?, ?);', [
+        Member.cursor.execute('DELETE FROM loans WHERE member_id = ?', (self.id,))
+        Member.cursor.executemany('INSERT INTO loans (id, principal, rate, member_id) VALUES (?, ?, ?, ?);', [
             tuple(l) for l in self.loans])
 
         Member.db.commit()
@@ -217,17 +243,16 @@ class Member:
     def calc_r(self, type: Literal['cd'], term: float) -> float | None:
         ...
 
-    # type: ignore
-    def calc_r(self, type, term = None):
+    def calc_r(self, type, term=None):
         if self.credit_score is None:
             return
         try:
             if type == 'savings':
-                return BASE_RATES['savings'] * self.credit_score/850
+                return BASE_RATES['savings']/100 * self.credit_score/850
             elif type == 'cd':
-                return BASE_RATES['cd'][str(term)] * self.credit_score/850
+                return BASE_RATES['cd'][str(term)]/100 * self.credit_score/850
             elif type == 'loan':
-                return BASE_RATES['loan']
+                return BASE_RATES['loan']/100
             else:
                 raise ValueError
         except KeyError:

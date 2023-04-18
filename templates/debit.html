@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Debit Access{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/form.css') }}">
+  <script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
+{% endblock %}
+
+{% block body %}
+  <form class="centered flex-container card" method="post">
+    <h2>Manage Debit Access</h2>
+    <label>
+      <input type="checkbox"
+             name="turn-on"
+             class="enable-next"
+             {% if checked %}checked{% endif %}>
+      Allow Debit Access
+      {# Weird layout to allow `form.js` to do stuff #}
+      <fieldset style="border: 0; padding: 0; margin-left: 1.3em;">
+        <div>
+          <input type="password"
+                 name="pin"
+                 pattern="\d{4,}"
+                 style="width: 80%"
+                 placeholder="{% if checked %}Change PIN{% else %}Set PIN{% endif %} (Numerical code of at least four digits)">
+        </div>
+      </fieldset>
+    </label>
+    <button>Save</button>
+  </form>
+{% endblock %}

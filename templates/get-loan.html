@@ -3,15 +3,29 @@
 {% block title %}Get Loan{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
-<script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/form.css') }}">
+  <script src="{{ url_for('static', filename='js/form.js') }}" defer></script>
 {% endblock %}
 
 {% block body %}
-<form class="centered flex-container card">
-  <h2>Get Loan</h2>
-  <input min="0.01" step="0.01" type="number" name="amount" placeholder="Amount ($)" required>
-  <p style="border: 0;">Rate: {{ rate }}%</p>
-  <button>Get Loan</button>
-</form>
+  <form class="centered flex-container card">
+    {% if rate is not none %}
+      <h2>Get Loan</h2>
+      <input min="0.01"
+             step="0.01"
+             type="number"
+             name="amount"
+             placeholder="Amount ($)"
+             required>
+      <p style="border: 0;">Rate: {{ rate }}%</p>
+      <button>Get Loan</button>
+    {% else %}
+      <p class="notice">
+        You don't have any credit history, so you can't apply for a
+        loan yet. Try <a href="/get-credit-card/">applying for a
+        credit card</a> to build history!
+      </p>
+    {% endif %}
+  </form>
 {% endblock %}
