@@ -245,7 +245,7 @@ try:
                 Member.get_member(str(request.json['recipient-id'])).sync_balance()
                 Member.get_member(str(request.json['recipient-id'])).save()
                 return list(Member.get_member(request.json["payer-id"]).charge(Member.get_member(str(request.json["recipient-id"])), float(request.json["amount"]), bool(request.json["taxable"]))), 200
-            # If password is incorrect
+            # If PIN is incorrect
             return "", 401
         # If some Member didn't exist
         except (TypeError, AttributeError, ValueError):
