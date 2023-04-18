@@ -1,4 +1,3 @@
-CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE members(id TEXT PRIMARY KEY, f_name TEXT NOT NULL, l_name TEXT NOT NULL, credit_score INTEGER, pass_hash TEXT, pin_hash TEXT);
 CREATE TABLE transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL NOT NULL, payer_id TEXT NOT NULL, recipient_id TEXT NOT NULL, date TEXT, FOREIGN KEY (payer_id) REFERENCES members(id), FOREIGN KEY (recipient_id) REFERENCES members(id));
 CREATE TABLE accounts(id INTEGER PRIMARY KEY AUTOINCREMENT, balance REAL DEFAULT 0.00, type TEXT NOT NULL, member_id TEXT NOT NULL, r REAL, term REAL, FOREIGN KEY (member_id) REFERENCES members(id));
