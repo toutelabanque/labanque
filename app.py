@@ -76,7 +76,7 @@ try:
             if request.method == 'POST':
                 try:
                     charged, remaining, _ = Member.get_member(session['id']).charge(Member.get_member(
-                        str(request.form['to'])), float(request.form['amount']), False)
+                        str(request.form['to'])), int(float(request.form['amount']) * 100), False)
                 except AttributeError:
                     exists = False
             return render_template('direct-transfer.html', exists=exists, charged=charged, remaining=remaining)
@@ -91,13 +91,13 @@ try:
                 try:
                     if request.form['type'] == 'savings':
                         done = Member.get_member(session['id']).create_account(
-                            float(request.form["starting-amount"]), Member.get_member(session['id']).calc_r('savings'))
+                            int(float(request.form["starting-amount"]) * 100), Member.get_member(session['id']).calc_r('savings'))
                     elif request.form['type'] == 'cd':
                         done = Member.get_member(session['id']).create_account(
-                            float(request.form["starting-amount"]), Member.get_member(session['id']).calc_r('cd', float(request.form['term'])), float(request.form['term']))
+                            int(float(request.form["starting-amount"]) * 100), Member.get_member(session['id']).calc_r('cd', float(request.form['term'])), float(request.form['term']))
                     elif request.form['type'] == 'checking':
                         done = Member.get_member(session['id']).create_account(
-                            float(request.form["starting-amount"]))
+                            int(float(request.form["starting-amount"]) * 100))
                     poor = False
                 except ValueError:
                     done = False
@@ -186,11 +186,11 @@ try:
                     if account.id == int(request.form['to']):
                         to = account
                         break
-                if from_.balance >= float(request.form['amount']):
-                    from_.balance -= float(request.form['amount'])
+                if from_.balance >= int(float(request.form['amount']) * 100):
+                    from_.balance -= int(float(request.form['amount']) * 100)
                 else:
                     abort(400)
-                to.balance += float(request.form['amount'])
+                to.balance += int(float(request.form['amount']) * 100)
                 return redirect("/accounts/" + str(id) + "/", 303)
         return redirect("/login/?redir=/accounts/transfer/" + str(id) + "/", 303)
 
@@ -225,9 +225,6 @@ try:
 
     @app.post("/charge/")
     def charge():
-        # If the request is from an unregistered IP
-        if request.remote_addr not in [ip[0] for ip in Member.cursor.execute('SELECT ip FROM registered_ips')]:
-            return "", 403
         # If the request doesn't say how long it is
         if request.content_length is None:
             return "", 411
@@ -235,18 +232,29 @@ try:
         elif request.content_length > 200:
             return "", 413
         try:
-            # If the account is not debit enabled
-            if Member.get_member(str(request.json['payer-id'])).pin_hash() is None:
-                return "", 404
-            # If all goes well
-            if checkpw(str(request.json["pin"]).encode('utf-8'), Member.get_member(str(request.json['payer-id'])).pin_hash()):
-                Member.get_member(str(request.json['payer-id'])).sync_balance()
-                Member.get_member(str(request.json['payer-id'])).save()
-                Member.get_member(str(request.json['recipient-id'])).sync_balance()
-                Member.get_member(str(request.json['recipient-id'])).save()
-                return list(Member.get_member(request.json["payer-id"]).charge(Member.get_member(str(request.json["recipient-id"])), float(request.json["amount"]), bool(request.json["taxable"]))), 200
-            # If PIN is incorrect
-            return "", 401
+            if request.json['type'] == 'digital':
+                return "Under Development", 501
+            
+            # If the request if from an unregistered IP
+            if request.remote_addr not in [ip[0] for ip in Member.cursor.execute('SELECT ip FROM registered_ips')]:
+                return "", 403
+            
+            if request.json['type'] == 'debit':
+                # If the account is not debit enabled
+                if Member.get_member(str(request.json['payer-id'])).pin_hash() is None:
+                    return "", 404
+                # If all goes well
+                if checkpw(str(request.json["pin"]).encode('utf-8'), Member.get_member(str(request.json['payer-id'])).pin_hash()):
+                    Member.get_member(str(request.json['payer-id'])).sync_balance()
+                    Member.get_member(str(request.json['payer-id'])).save()
+                    Member.get_member(str(request.json['recipient-id'])).sync_balance()
+                    Member.get_member(str(request.json['recipient-id'])).save()
+                    return list(Member.get_member(request.json["payer-id"]).charge(Member.get_member(str(request.json["recipient-id"])), float(request.json["amount"]), bool(request.json["taxable"]))), 200
+                # If PIN is incorrect
+                return "", 401
+            if request.json['type'] == 'credit':
+                return "Under Development", 501
+            return "", 400
         # If some Member didn't exist
         except (TypeError, AttributeError, ValueError):
             return "", 404

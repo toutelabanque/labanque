@@ -25,7 +25,7 @@
                   class="flex-container">
             <h3>ID: #{{ account.id }}</h3>
             <p>Type: {{ account.type | capitalize | replace('d', 'D') }}</p>
-            <p>Balance: ${{ account.balance | round(2) }}</p>
+            <p>Balance: ${{ account.balance / 100 | round(2) }}</p>
           </button>
         </form>
       {% endfor %}

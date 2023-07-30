@@ -44,15 +44,15 @@ class Loan:
 class Account:
 
     @overload
-    def __init__(self, balance: float, type: Literal['checking'], member_id: str, id: int | None = None):
+    def __init__(self, balance: int, type: Literal['checking'], member_id: str, id: int | None = None):
         ...
 
     @overload
-    def __init__(self, balance: float, type: Literal['savings'], member_id: str, id: int | None, r: float):
+    def __init__(self, balance: int, type: Literal['savings'], member_id: str, id: int | None, r: float):
         ...
 
     @overload
-    def __init__(self, balance: float, type: Literal['cd'], member_id: str, id: int | None, r: float, term: float):
+    def __init__(self, balance: int, type: Literal['cd'], member_id: str, id: int | None, r: float, term: float):
         ...
 
     def __init__(self, balance, type, member_id, id=None, r=None, term=None):
@@ -90,7 +90,7 @@ class Member:
         self.transactions: list[Transaction] = []
         self.loans: list[Loan] = []
         self.accounts: list[Account] = []
-        self.balance: float = 0.00
+        self.balance: int = 0
 
         if len(args) == 0:
             # Existing member
@@ -148,7 +148,7 @@ class Member:
             Member.cursor.executemany('INSERT OR REPLACE INTO id_space VALUES (?)', Member.id_space())
 
             # Make main Checking Account to be used for DTs, etc. Starts with $1,000.
-            self.checking = Account(1000.0, 'checking', self.id)
+            self.checking = Account(100000, 'checking', self.id)
             self.accounts.append(self.checking)
         else:
             raise IndexError(
@@ -157,9 +157,9 @@ class Member:
         self.save()
 
     def sync_balance(self):
-        self.balance = 0.00
+        self.balance = 0
         for account in self.accounts:
-            self.balance += account.balance if account.type != "cd" else 0.00
+            self.balance += account.balance if account.type != "cd" else 0
 
     def create_account(self, starting_amount: float, r: float | None = None, term: float | None = None):
         if self.checking.balance >= starting_amount:

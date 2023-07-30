@@ -29,7 +29,7 @@
       <p>Rate: {{ account.r }}%</p>
     {% endif %}
     {% if account.term is not none %}<p>Term: {{ account.term }}</p>{% endif %}
-    <p>Balance: ${{ account.balance }}</p>
+    <p>Balance: ${{ account.balance / 100 | round(2) }}</p>
     {% if account.type != 'cd' %}
       {% set actions = ('close',) %}
     {% endif %}
