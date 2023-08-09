@@ -4,7 +4,7 @@
 
 {% block body %}
   <div>
-    <h2 style="text-align: center;">Balance: ${{ balance | round(2) }}*</h2>
+    <h2 style="text-align: center;">Balance: ${{ balance/100 | round(2) }}*</h2>
     <div class="flex-container"
          style="flex-wrap: nowrap;
                 padding: 10px;

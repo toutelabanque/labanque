@@ -83,7 +83,7 @@ class Member:
 
     members: list[Member] = []
 
-    id_space: Callable[[], list[tuple[int]]] = lambda: Member.cursor.execute('SELECT id FROM id_space').fetchall()
+    id_space: list[tuple[int]] = cursor.execute('SELECT id FROM id_space').fetchall()
 
     def __init__(self, id: str | None, *args) -> None:
         """Member(id: str | None, [f_name: str], [l_name: str], [pass_hash: Callable[[], bytes]])"""
@@ -141,11 +141,12 @@ class Member:
             self.pin_hash = lambda: None
             self.credit_score = None
             try:
-                self.id: str = str(choice(Member.id_space())[0])
+                self.id: str = str(choice(Member.id_space)[0])
             except IndexError:
                 raise IndexError("Ran out of available Member IDs.")
-            Member.id_space().remove((int(self.id),))
-            Member.cursor.executemany('INSERT OR REPLACE INTO id_space VALUES (?)', Member.id_space())
+            Member.id_space.remove((int(self.id),))
+            Member.cursor.execute('DELETE FROM id_space;')
+            Member.cursor.executemany('INSERT INTO id_space VALUES (?);', Member.id_space)
 
             # Make main Checking Account to be used for DTs, etc. Starts with $1,000.
             self.checking = Account(100000, 'checking', self.id)
