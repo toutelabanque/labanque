@@ -18,15 +18,15 @@
     {% if remaining != "" %}
       {% if remaining < 0 %}
         <p style="background-color: lightcoral;">
-          You were ${{ -remaining }} short, so you couldn't make the transaction of ${{ charged }}
+          You were ${{ -remaining/100 | round(2) }} short, so you couldn't make the transaction of ${{ charged/100 | round(2) }}
         </p>
       {% else %}
         <p>
-          Transaction complete! You were charged ${{ charged }} and have ${{ remaining }} left.
+          Transaction complete! You were charged ${{ charged/100 | round(2) }} and have ${{ remaining/100 | round(2) }} left.
         </p>
       {% endif %}
     {% endif %}
-    <input name="to" type="number" min="1000000000" max="1000000999" placeholder="To (10-digit Member ID)" required>
+    <input name="to" type="number" min="1000000000" max="9999999999" placeholder="To (10-digit Member ID)" required>
     <input name="amount" type="number" step="0.01" min="0.01" placeholder="Amount ($)" required>
     <button>Send!</button>
   </form>

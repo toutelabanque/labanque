@@ -76,7 +76,7 @@ try:
             if request.method == 'POST':
                 try:
                     charged, remaining, _ = Member.get_member(session['id']).charge(Member.get_member(
-                        str(request.form['to'])), int(float(request.form['amount']) * 100), False)
+                        str(request.form['to'])), int(float(request.form['amount']) * 100), True)
                 except AttributeError:
                     exists = False
             return render_template('direct-transfer.html', exists=exists, charged=charged, remaining=remaining)
@@ -256,11 +256,11 @@ try:
                 return "Under Development", 501
             return "", 400
         # If some Member didn't exist
-        except (TypeError, AttributeError, ValueError):
+        except (TypeError, AttributeError, ValueError) as e:
             return "", 404
         # If anything else goes wrong, blame it on the client
         except:
-           return "", 400
+            return "", 400
 
     if __name__ == '__main__':
         app.run('0.0.0.0', 443, ssl_context='adhoc')

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from datetime import datetime
+from datetime import datetime, UTC
 from random import choice
 from sqlite3 import connect
 from typing import Callable, Literal, overload
@@ -7,7 +7,7 @@ from consts import SALES_TAX_PERCENT, BASE_RATES
 
 __all__ = ['Member']
 
-now = datetime.utcnow
+now = lambda: datetime.now(UTC)
 
 
 class Transaction:
