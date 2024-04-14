@@ -76,7 +76,7 @@ try:
             if request.method == 'POST':
                 try:
                     charged, remaining, _ = Member.get_member(session['id']).charge(Member.get_member(
-                        str(request.form['to'])), int(float(request.form['amount']) * 100), True)
+                        str(request.form['to'])), int(float(request.form['amount']) * 100), False)
                 except AttributeError:
                     exists = False
             return render_template('direct-transfer.html', exists=exists, charged=charged, remaining=remaining)

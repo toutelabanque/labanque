@@ -188,7 +188,7 @@ class Member:
 
     def charge(self, recipient: Member, amount: float, taxable: bool = True) -> tuple[float, float, float]:
         if taxable:
-            sales_tax = SALES_TAX_PERCENT * amount
+            sales_tax = SALES_TAX_PERCENT/100 * amount
             Member.get_member(
                 '0000000000').checking.balance += sales_tax
         else:
