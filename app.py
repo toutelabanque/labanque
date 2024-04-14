@@ -75,7 +75,7 @@ try:
             remaining = ""
             if request.method == 'POST':
                 try:
-                    if float(request.form['amount']) < 0.01:
+                    if float(request.form['amount']) < 1:
                         return '', 400
                     charged, remaining, _ = Member.get_member(session['id']).charge(Member.get_member(
                         str(request.form['to'])), int(float(request.form['amount']) * 100), False)
@@ -245,7 +245,7 @@ try:
                 # If the account is not debit enabled
                 if Member.get_member(str(request.json['payer-id'])).pin_hash() is None:
                     return "", 404
-                if float(request.json["amount"]) < 0.01:
+                if float(request.json["amount"]) < 1:
                     return "", 400
                 # If all goes well
                 if checkpw(str(request.json["pin"]).encode('utf-8'), Member.get_member(str(request.json['payer-id'])).pin_hash()):
