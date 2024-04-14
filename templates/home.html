@@ -4,7 +4,7 @@
 
 {% block body %}
   <div>
-    <h2 style="text-align: center;">Balance: ${{ balance/100 | round(2) }}*</h2>
+    <h2 style="text-align: center;">Balance: ${{ (balance/100) | round(2) }}*</h2>
     <div class="flex-container"
          style="flex-wrap: nowrap;
                 padding: 10px;
@@ -25,7 +25,7 @@
                   class="flex-container">
             <h3>ID: #{{ account.id }}</h3>
             <p>Type: {{ account.type | capitalize | replace('d', 'D') }}</p>
-            <p>Balance: ${{ account.balance / 100 | round(2) }}</p>
+            <p>Balance: ${{ (account.balance / 100) | round(2) }}</p>
           </button>
         </form>
       {% endfor %}

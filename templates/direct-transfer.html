@@ -18,11 +18,11 @@
     {% if remaining != "" %}
       {% if remaining < 0 %}
         <p style="background-color: lightcoral;">
-          You were ${{ -remaining/100 | round(2) }} short, so you couldn't make the transaction of ${{ charged/100 | round(2) }}
+          You were ${{ (-remaining/100) | round(2) }} short, so you couldn't make the transaction of ${{ (charged/100) | round(2) }}
         </p>
       {% else %}
         <p>
-          Transaction complete! You were charged ${{ charged/100 | round(2) }} and have ${{ remaining/100 | round(2) }} left.
+          Transaction complete! You were charged ${{ (charged/100) | round(2) }} and have ${{ (remaining/100) | round(2) }} left.
         </p>
       {% endif %}
     {% endif %}

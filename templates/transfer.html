@@ -40,7 +40,7 @@
                       display: inline-block">
           <h3>ID: #{{ account.id }}</h3>
           <p>Type: {{ account.type | capitalize }}</p>
-          <p>Balance: ${{ account.balance/100 | round(2) }}</p>
+          <p>Balance: ${{ (account.balance/100) | round(2) }}</p>
           <input type="radio" name="to" value="{{ account.id }}" required>
         </label>
       {% endfor %}
