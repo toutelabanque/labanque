@@ -196,8 +196,8 @@ class Member:
 
 
         if self.checking.balance >= amount + sales_tax:
-            self.checking.balance -= amount + sales_tax
             recipient.checking.balance += amount - sales_tax
+            self.checking.balance -= amount + sales_tax
         # In case you don't have enough money, bounce.
         else:
             return (amount, self.checking.balance - amount, sales_tax)

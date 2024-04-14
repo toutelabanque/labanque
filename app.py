@@ -234,14 +234,15 @@ try:
         elif request.content_length > 200:
             return "", 413
         try:
-            if request.json['type'] == 'digital':
-                return "Under Development", 501
-            
             # If the request if from an unregistered IP
             if request.remote_addr not in [ip[0] for ip in Member.cursor.execute('SELECT ip FROM registered_ips')]:
                 return "", 403
             
-            if request.json['type'] == 'debit':
+            if request.json['type'] == 'digital':
+                return "Under Development", 501
+            elif request.json['type'] == 'credit':
+                return "Under Development", 501
+            elif request.json['type'] == 'debit':
                 # If the account is not debit enabled
                 if Member.get_member(str(request.json['payer-id'])).pin_hash() is None:
                     return "", 404
