@@ -237,10 +237,8 @@ try:
             # If the request if from an unregistered IP
             if request.remote_addr not in [ip[0] for ip in Member.cursor.execute('SELECT ip FROM registered_ips')]:
                 return "", 403
-            
-            if request.json['type'] == 'digital':
-                return "Under Development", 501
-            elif request.json['type'] == 'credit':
+
+            if request.json['type'] == 'credit':
                 return "Under Development", 501
             elif request.json['type'] == 'debit':
                 # If the account is not debit enabled
@@ -259,8 +257,6 @@ try:
                     return response, code
                 # If PIN is incorrect
                 return "", 401
-            if request.json['type'] == 'credit':
-                return "Under Development", 501
             return "", 400
         # If some Member didn't exist
         except (TypeError, AttributeError, ValueError) as e:
